@@ -1,7 +1,7 @@
 let train, song, fft;
 const SEG_W = 4;   // 레일의 각 점이 차지하는 가로 픽셀 폭
 let rail = [];     // y좌표를 저장할 배열
-let circleSize = 130;
+let circleSize = 100;
 let loaderElement = document.getElementById('loader');
 let arrows = [];   // Arrow 객체 배열
 const ARROW_COUNT = 3; // 생성할 화살표 개수
@@ -12,7 +12,7 @@ function preload() {
 }
 
 function setup() {
-    createCanvas(windowWidth * 0.9, windowHeight);
+    createCanvas(windowWidth, windowHeight);
 
     fft = new p5.FFT(0.8, 1024);
 
