@@ -31,7 +31,29 @@ function draw() {
     const targetY = map(bassEnergy,0, 255, height * 0.9, height * -0.1);
             
     // Smooth 효과 적용
-            
+    trail.push({
+        x: mouseX,
+        y: mouseY,
+        size: random(8, 20),
+        alpha: 255,
+        green: random(120, 180)
+      });
+    
+      // 오래된 트레일 제거
+      if (trail.length > 100) {
+        trail.splice(0, 1);
+      }
+    
+      // 트레일 그리기
+      for (let i = 0; i < trail.length; i++) {
+        let t = trail[i];
+        fill(50, t.green, 50, t.alpha);
+        ellipse(t.x, t.y, t.size);
+    
+        // 알파 값 줄이기 (서서히 사라짐)
+        t.alpha -= 3;
+        t.size *= 0.98; // 점점 작아짐
+      }    
     const smoothFactor = 0.1;
     const y = rail.length > 0 ? lerp(rail[rail.length - 1], targetY, smoothFactor) : targetY;
     rail.push(y);
