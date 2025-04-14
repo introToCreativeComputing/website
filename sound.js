@@ -7,6 +7,12 @@ let prevVol = 0;
 let mountainAmp = 0;
 const minAmp = 0.15; // 최소 산맥 강도
 let polySynth;
+// ── Fade‑reset 제어용 ───────────────────────────────
+let resetting = false;   // 리셋 동작 중인가?
+let fadeAmt = 0;       // 0‥255 투명도
+let fadeDir = 1;       // +1: out,  ‑1: in
+const FADE_STEP = 12;      // 한 프레임당 투명도 변화량
+
 
 // 현재 활성화된 노이즈와 노이즈 타입
 let activeNoise = null;
@@ -30,7 +36,14 @@ function setup() {
   myCanvas = createCanvas(windowWidth, windowHeight);
   mainGraphics = createGraphics(width, height);
   mainGraphics.background(0);
-
+  let resetButton = createButton("Reset");
+  resetButton.position(windowWidth - 150, 220);
+  resetButton.mousePressed(() => {
+    // 페이드‑아웃 시작
+    resetting = true;
+    fadeDir = 1;    // out
+    fadeAmt = 0;
+  });
   // 마이크 준비
   mic = new p5.AudioIn();
   mic.start();
@@ -296,6 +309,34 @@ function draw() {
   textStyle(BOLD);
   text("Silent Noisy Mountain", 50, 140);
   pop();
+  if (resetting) {
+    // 투명도 업데이트
+    fadeAmt = constrain(fadeAmt + FADE_STEP * fadeDir, 0, 255);
+
+    // 어두운 사각형으로 화면 덮기
+    push();
+    noStroke();
+    fill(0, fadeAmt);
+    rect(0, 0, width, height);
+    pop();
+
+    // 페이드‑아웃이 완전히 끝났을 때(=완전 검정)
+    if (fadeDir === 1 && fadeAmt >= 255) {
+      /* === 여기서 초기화하고 싶은 것들 수행 === */
+      mainGraphics.clear();
+      mainGraphics.background(0);
+      lastPlayedChord = "";
+      // 필요하다면 mountainAmp, prevVol 등도 리셋
+
+      // 페이드‑인 시작
+      fadeDir = -1;
+    }
+
+    // 페이드‑인이 모두 끝났으면 리셋 종료
+    if (fadeDir === -1 && fadeAmt <= 0) {
+      resetting = false;
+    }
+  }
 }
 
 
