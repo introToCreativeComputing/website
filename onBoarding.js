@@ -1,7 +1,8 @@
 let train, song, fft;
 const SEG_W = 4;   // 레일의 각 점이 차지하는 가로 픽셀 폭
 let rail = [];     // y좌표를 저장할 배열
-let circleSize = 100;
+let circleSize = 130;
+let loaderElement = document.getElementById('loader');
 
 function preload() {
 soundFormats('mp3', 'wav');
@@ -9,7 +10,7 @@ train = loadImage('assets/train.png');
 song = loadSound('assets/bgBgm.wav');}
 
 function setup() {    
-createCanvas(windowWidth * 0.8, windowHeight);
+createCanvas(windowWidth * 0.9, windowHeight);
    
 fft=new p5.FFT(0.8,1024);
    
@@ -19,12 +20,13 @@ textAlign(CENTER,CENTER);
 }
 
 function draw() {
+    loaderElement.style.display = 'none';
     background(0);
         
     if (song.isPlaying()) {
     fft.analyze();
     const bassEnergy = fft.getEnergy('bass');
-    circleSize = map(bassEnergy, 0, 255, 50, 300);
+    circleSize = map(bassEnergy, 0, 255, 20, 400);
    
     const targetY = map(bassEnergy,0, 255, height * 0.9, height * -0.1);
             
@@ -40,9 +42,13 @@ function draw() {
         }
     drawRail();
     drawTrain();
-    fill(150, 100, 255);
-    noStroke();
-    ellipse(width / 2, height / 2, circleSize);
+    noFill();
+    stroke(255);
+    strokeWeight(3);
+    ellipse(width*0.6, height*0.8, circleSize);
+    fill(255); // 텍스트 색상 (흰색)
+    textSize(24); // 텍스트 크기
+    text("Enter", width * 0.6, height * 0.8);
 }
 
 function drawRail() {

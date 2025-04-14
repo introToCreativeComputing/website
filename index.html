@@ -6,7 +6,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/addons/p5.sound.min.js"></script>
     <style>
-        
+            #p5_loading {
+        display: none;
+    }
 body { margin:  0;
             background: #000;
             color: #fff;
@@ -19,11 +21,52 @@ body { margin:  0;
             font-size: 13px;
             opacity: .8;
         }
-    </style>
+        .loader-6 {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 50px;
+            height: 50px;
+            margin-top: -25px; /* 중심 위치로 정렬 */
+            margin-left: -25px; /* 중심 위치로 정렬 */
+            border: 5px solid rgba(30,30,30,0.7);
+            border-radius: 50%;
+            border-top-color: rgba(255, 255, 255, 0.8);
+            animation: loader6-1 1.5s infinite linear;
+        }
+
+        .loader-6:before,
+        .loader-6:after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            background-color: rgba(30,30,30,0.7);
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            animation: loader6-2 1.5s infinite linear;
+        }
+
+        .loader-6:after {
+            animation-direction: reverse;
+        }
+
+        @keyframes loader6-1 {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes loader6-2 {
+            0% { transform: scale(0.2); left: 0%; }
+            50% { transform: scale(1.0); left: 50%; }
+            100% { transform: scale(0.2); left: 100%; }
+               }    </style>
 </head>
 <body>
+    <div class="loader-6" id="loader"></div>
     <div id="msg">click → play / pause</div>
-    <script src="main.js"></script>
+    <script src="onBoarding.js"></script>
 </body>
 </html>
 
