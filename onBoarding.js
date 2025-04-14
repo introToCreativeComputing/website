@@ -75,17 +75,23 @@ function drawRail() {
 }
 
 function drawTrain() {
+    if (rail.length < 2) return;
 
-    if (rail.length === 0) return;
     const i = rail.length - 1;
     const x = i * SEG_W;
     const y = rail[i];
+
+    // 바로 전 점과 현재 점을 이용해서 기울기 계산
+    const prevY = rail[i - 1];
+    const angle = atan2(y - prevY, SEG_W); // SEG_W는 x 차이
+
     push();
+    translate(x, y - 25);
+    rotate(angle * 0.5); // 살짝만 회전 (보통 1:1 적용하면 과하게 돌아감)
     imageMode(CENTER);
-    image(train, x, y - 25, 100, 50);
+    image(train, 0, 0, 100, 50);
     pop();
-}
-class Arrow {
+} class Arrow {
     constructor(baseAngle, radius) {
         this.baseAngle = baseAngle; // 마우스 기준 기본 오프셋 방향
         this.radius = radius;       // 기본 오프셋 거리
