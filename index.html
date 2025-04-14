@@ -1,93 +1,92 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="utf-8">
     <title>Talk to self</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/addons/p5.sound.min.js"></script>
-    <script
-  src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs"
-  type="module"
-></script>
+    <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
 
     <style>
- body {
-        margin: 0;
-        background: #000;
-        color: #fff;
-        font-family: sans-serif;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        overflow: hidden;
-    }
-
-    .loader {
-        position: absolute;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        top: 40%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
-
-    #p5_loading {
-        position: absolute;
-        font-family: 'f2', sans-serif;
-        font-size: 60px;
-        text-align: center;
-        top: 60%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        animation: bounce 1s ease-in-out infinite; /* 애니메이션 설정 */
-    }
-
-    /* 위로 올라갔다 내려오는 애니메이션 */
-    @keyframes bounce {
-        0%, 100% {
-            transform: translate(-50%, -50%); /* 기본 위치 */
+        body {
+            margin: 0;
+            background: #000;
+            color: #fff;
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
         }
-        50% {
-            transform: translate(-50%, -70%); /* 위로 올라감 */
+
+        .loader {
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
-    }
 
-    #msg {
-        position: fixed;
-        top: 10px;
-        right: 12px;
-        font-size: 13px;
-        opacity: .8;
-    }
+        #p5_loading {
+            position: absolute;
+            font-family: 'f2', sans-serif;
+            font-size: 60px;
+            text-align: center;
+            top: 70%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: bounce 1s ease-in-out infinite;
+            /* 애니메이션 설정 */
+        }
 
-    @font-face {
-        font-family: 'f1';
-        src: url('assets/f1.ttf') format('truetype');
-    }
-    @font-face {
-        font-family: 'f2';
-        src: url('assets/f2.ttf') format('truetype');
-    } </style>
+        /* 위로 올라갔다 내려오는 애니메이션 */
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translate(-50%, -50%);
+                /* 기본 위치 */
+            }
+
+            50% {
+                transform: translate(-50%, -70%);
+                /* 위로 올라감 */
+            }
+        }
+
+        #msg {
+            position: fixed;
+            top: 10px;
+            right: 12px;
+            font-size: 13px;
+            opacity: .8;
+        }
+
+        @font-face {
+            font-family: 'f1';
+            src: url('assets/f1.ttf') format('truetype');
+        }
+
+        @font-face {
+            font-family: 'f2';
+            src: url('assets/f2.ttf') format('truetype');
+        }
+    </style>
 </head>
+
 <body>
-    
+
 
     <div class="loader" id="loader">
-        <dotlottie-player
-src="https://lottie.host/fd6ec0cb-da28-4f9f-8b09-702bb0742ae9/xhB1leiLdR.lottie"
-background="transparent"
-speed="1"
-style="width: 500px; height: 500px"
-loop
-autoplay
-></dotlottie-player>
+        <dotlottie-player src="https://lottie.host/fd6ec0cb-da28-4f9f-8b09-702bb0742ae9/xhB1leiLdR.lottie"
+            background="transparent" speed="1" style="width: 500px; height: 500px" loop autoplay></dotlottie-player>
     </div>
     <div id="msg">click → play / pause</div>
     <script src="onBoarding.js"></script>
 </body>
+
 </html>
-
-
-
