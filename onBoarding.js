@@ -1,7 +1,7 @@
 let train, song, fft;
 const SEG_W = 4;   // 레일의 각 점이 차지하는 가로 픽셀 폭
 let rail = [];     // y좌표를 저장할 배열
-let circleSize = 100;
+let circleSize = 80;
 let loaderElement = document.getElementById('loader');
 let arrows = [];   // Arrow 객체 배열
 let waveSentences = [];
@@ -12,15 +12,16 @@ const AMP = 25;         // 파동 진폭
 const FREQ = 0.015;     // 파동 주파수
 const ARROW_COUNT = 3; // 생성할 화살표 개수
 const WAVE_FONT_SIZE = 170;
+let waveFont;
 function preload() {
     soundFormats('mp3', 'wav');
     train = loadImage('assets/train.png');
     song = loadSound('assets/bgBgm.wav');
+    waveFont = loadFont('assets/f1.ttf');
 }
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
-    textFont("f1");   // 원하는 폰트 지정
     textAlign(LEFT, CENTER); // 왼쪽 정렬
     waveSentences.push(new WaveSentence(width)); fft = new p5.FFT(0.8, 1024);
 
@@ -114,7 +115,9 @@ function drawTrain() {
     imageMode(CENTER);
     image(train, 0, 0, 100, 50);
     pop();
-} class Arrow {
+
+} 
+class Arrow {
     constructor(baseAngle, radius) {
         this.baseAngle = baseAngle; // 마우스 기준 기본 오프셋 방향
         this.radius = radius;       // 기본 오프셋 거리
@@ -187,15 +190,16 @@ class WaveSentence {
         push();
         noStroke();
         fill(255);
-        textSize(WAVE_FONT_SIZE);   // ← 크게!
+        textFont(waveFont);        
+        textSize(WAVE_FONT_SIZE);   
         let cx = this.x;
         for (let i = 0; i < WAVE_STR.length; i++) {
             let ch = WAVE_STR.charAt(i);
             let yOffset = sin((cx * FREQ) + frameCount * 0.05) * AMP;
             text(ch, cx, this.baseY + yOffset);
-            cx += textWidth(ch);      // 큰 글자 폭에 맞춰 이동
+            cx += textWidth(ch);
         }
-        pop();
+        pop();                       
     }
     // 문장이 완전히 화면을 벗어났는지
     isOffScreen() {
