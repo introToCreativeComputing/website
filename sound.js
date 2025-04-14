@@ -7,7 +7,6 @@ let prevVol = 0;
 let mountainAmp = 0;
 const minAmp = 0.15; // 최소 산맥 강도
 let polySynth;
-// ── Fade‑reset 제어용 ───────────────────────────────
 let resetting = false;   // 리셋 동작 중인가?
 let fadeAmt = 0;       // 0‥255 투명도
 let fadeDir = 1;       // +1: out,  ‑1: in
