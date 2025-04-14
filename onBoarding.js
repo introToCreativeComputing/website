@@ -45,10 +45,10 @@ function draw() {
     noFill();
     stroke(255);
     strokeWeight(3);
-    ellipse(width*0.6, height*0.8, circleSize);
+    ellipse(width*0.5, height*0.8, circleSize);
     fill(255); // 텍스트 색상 (흰색)
     textSize(24); // 텍스트 크기
-    text("Enter", width * 0.6, height * 0.8);
+    text("Enter", width * 0.5, height * 0.8);
 }
 
 function drawRail() {
@@ -84,7 +84,7 @@ song.pause();   }
 else {
 song.play();
    }
-   let d = dist(mouseX, mouseY, width / 2, height / 2);
+   let d = dist(mouseX, mouseY, width*0.5, height*0.8);
   
    // 만약 클릭한 위치가 원 내부라면
    if (d < circleSize / 2) {
