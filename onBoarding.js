@@ -24,7 +24,7 @@ function draw() {
     if (song.isPlaying()) {
     fft.analyze();
     const bassEnergy = fft.getEnergy('bass');
-    circleSize = map(bass, 0, 255, 50, 300);
+    circleSize = map(bassEnergy, 0, 255, 50, 300);
    
     const targetY = map(bassEnergy,0, 255, height * 0.9, height * -0.1);
             
@@ -83,5 +83,5 @@ song.play();
    // 만약 클릭한 위치가 원 내부라면
    if (d < circleSize / 2) {
      // 다음 페이지로 이동 (예를 들어, nextpage.html)
-     window.location.href = "nextpage.html";}
+     window.location.href = "mainContents.html";}
 }
