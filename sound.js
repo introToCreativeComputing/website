@@ -7,12 +7,8 @@ let prevVol = 0;
 let mountainAmp = 0;
 const minAmp = 0.15; // 최소 산맥 강도
 let polySynth;
-let resetting = false;   // 리셋 동작 중인가?
-let fadeAmt = 0;       // 0‥255 투명도
-let fadeDir = 1;       // +1: out,  ‑1: in
-const FADE_STEP = 12;      // 한 프레임당 투명도 변화량
 
-
+// 현재 활성화된 노이즈와 노이즈 타입
 let activeNoise = null;
 let activeNoiseType = "";
 
@@ -28,20 +24,11 @@ let updateInterval = 240; // 약 2초 (60fps 기준)
 // 화음 재생 켜고 끄는 여부 플래그
 let chordEnabled = false;
 
-
-
 function setup() {
   myCanvas = createCanvas(windowWidth, windowHeight);
   mainGraphics = createGraphics(width, height);
   mainGraphics.background(0);
-  let resetButton = createButton("Reset");
-  resetButton.position(windowWidth - 150, 220);
-  resetButton.mousePressed(() => {
-    // 페이드‑아웃 시작
-    resetting = true;
-    fadeDir = 1;    // out
-    fadeAmt = 0;
-  });
+
   // 마이크 준비
   mic = new p5.AudioIn();
   mic.start();
@@ -56,7 +43,6 @@ function setup() {
 
   filter = new p5.Filter("lowpass");
   filter.set(2000, 5); // cutoff 2000Hz, resonance 5
-
   delayEffect = new p5.Delay();
   reverb = new p5.Reverb();
 
@@ -66,33 +52,56 @@ function setup() {
   reverb.connect(getAudioContext().destination);
   console.log("오디오 초기화 및 이펙트 체인 설정 완료");
 
-  // MasterGain (마이크와 노이즈 믹싱용)
-  masterGain = new p5.Gain();
-  masterGain.amp(1);
-
   // Mic UI
   let micOnButton = createButton("Mic On");
-  micOnButton.position(windowWidth - 250, 20);
+  micOnButton.position(windowWidth - 280, 20);
+  micOnButton.style("background-color", "#ffffff");
+  micOnButton.style("color", "#333");
+  micOnButton.style("border", "none");
+  micOnButton.style("padding", "5px 10px");
+  micOnButton.style("font-family", "Arial, sans-serif");
+  micOnButton.style("border-radius", "5px");
+
   micOnButton.mousePressed(() => {
     mic.start();
   });
 
   let micOffButton = createButton("Mic Off");
-  micOffButton.position(windowWidth - 250, 60);
+  micOffButton.position(windowWidth - 280, 60);
+  micOffButton.style("background-color", "#ffffff");
+  micOffButton.style("color", "#333");
+  micOffButton.style("border", "none");
+  micOffButton.style("padding", "5px 10px");
+  micOffButton.style("font-family", "Arial, sans-serif");
+  micOffButton.style("border-radius", "5px");
   micOffButton.mousePressed(() => {
     mic.stop();
   });
 
   // 화음 제어 버튼 (Chord On / Chord Off)
   let chordOnButton = createButton("Chord On");
-  chordOnButton.position(windowWidth - 250, 100);
+  chordOnButton.position(windowWidth - 280, 100);
+  chordOnButton.style("background-color", "#ffffff");
+  chordOnButton.style("color", "#333");
+  chordOnButton.style("border", "none");
+  chordOnButton.style("padding", "5px 10px");
+  chordOnButton.style("font-family", "Arial, sans-serif");
+  chordOnButton.style("border-radius", "5px");
+
   chordOnButton.mousePressed(() => {
     chordEnabled = true;
     console.log("Chord playback enabled");
   });
 
   let chordOffButton = createButton("Chord Off");
-  chordOffButton.position(windowWidth - 250, 140);
+  chordOffButton.position(windowWidth - 280, 140);
+  chordOffButton.style("background-color", "#ffffff");
+  chordOffButton.style("color", "#333");
+  chordOffButton.style("border", "none");
+  chordOffButton.style("padding", "5px 10px");
+  chordOffButton.style("font-family", "Arial, sans-serif");
+  chordOffButton.style("border-radius", "5px");
+
   chordOffButton.mousePressed(() => {
     chordEnabled = false;
     console.log("Chord playback disabled");
@@ -101,6 +110,13 @@ function setup() {
   // Noise UI
   let muteButton = createButton("Mute");
   muteButton.position(windowWidth - 150, 140);
+  muteButton.style("background-color", "#ffffff");
+  muteButton.style("color", "#333");
+  muteButton.style("border", "none");
+  muteButton.style("padding", "5px 10px");
+  muteButton.style("font-family", "Arial, sans-serif");
+  muteButton.style("border-radius", "5px");
+
   muteButton.mousePressed(() => {
     if (activeNoise) {
       activeNoise.stop();
@@ -112,19 +128,33 @@ function setup() {
 
   let whiteButton = createButton("White Noise");
   whiteButton.position(windowWidth - 150, 20);
+  whiteButton.style("background-color", "#ffffff");
+  whiteButton.style("color", "#333");
+  whiteButton.style("border", "none");
+  whiteButton.style("padding", "5px 10px");
+  whiteButton.style("font-family", "Arial, sans-serif");
+  whiteButton.style("border-radius", "5px");
+
   whiteButton.mousePressed(() => {
     if (activeNoise) {
       activeNoise.stop();
       activeNoise.disconnect();
     }
     activeNoise = new p5.Noise("white");
-    activeNoise.amp(0.15);
+    activeNoise.amp(0.5);
     activeNoise.start();
     activeNoiseType = "white";
   });
 
   let brownButton = createButton("Brown Noise");
   brownButton.position(windowWidth - 150, 60);
+  brownButton.style("background-color", "#ffffff");
+  brownButton.style("color", "#333");
+  brownButton.style("border", "none");
+  brownButton.style("padding", "5px 10px");
+  brownButton.style("font-family", "Arial, sans-serif");
+  brownButton.style("border-radius", "5px");
+
   brownButton.mousePressed(() => {
     if (activeNoise) {
       activeNoise.stop();
@@ -138,6 +168,13 @@ function setup() {
 
   let pinkButton = createButton("Pink Noise");
   pinkButton.position(windowWidth - 150, 100);
+  pinkButton.style("background-color", "#ffffff");
+  pinkButton.style("color", "#333");
+  pinkButton.style("border", "none");
+  pinkButton.style("padding", "5px 10px");
+  pinkButton.style("font-family", "Arial, sans-serif");
+  pinkButton.style("border-radius", "5px");
+
   pinkButton.mousePressed(() => {
     if (activeNoise) {
       activeNoise.stop();
@@ -149,14 +186,14 @@ function setup() {
     activeNoiseType = "pink";
   });
 
-  // 볼륨 슬라이더 UI (배경 노이즈 볼륨 조절)
+  // 볼륨 슬라이더 UI (배경 노이즈 및 화음 볼륨 조절)
   noiseVolSlider = createSlider(0, 1, 0.5, 0.01);
-  noiseVolSlider.position(windowWidth - 250, 180);
+  noiseVolSlider.position(windowWidth - 240, 190);
 }
 
-
-
+//
 // window offset 함수: 각 노이즈 타입별로 x 좌표에 따른 추가 오프셋(픽셀 값)을 반환
+//
 function getWindowOffset(x, noiseType) {
   switch (noiseType) {
     case "white":
@@ -174,8 +211,6 @@ function getWindowOffset(x, noiseType) {
   }
 }
 
-
-
 function getAudioFeatures() {
   let vol = mic.getLevel(0.5);
   let volume = max(0.5, map(vol, 0, 0.2, 0.5, 3.0));
@@ -189,8 +224,6 @@ function getAudioFeatures() {
 
   return { volume, pitch };
 }
-
-
 
 function draw() {
   let { volume, pitch } = getAudioFeatures();
@@ -278,7 +311,7 @@ function draw() {
   let dominantFreq = maxIndex * (nyquist / spectrum.length);
 
   push();
-  fill(0);
+  fill(255);
   textSize(16);
   text("Dominant Frequency: " + nf(dominantFreq, 1, 2) + " Hz", 20, 20);
   pop();
@@ -291,13 +324,22 @@ function draw() {
     let fifth = midiToNote(baseMidi + 7);
 
     let chordStr = root + "-" + third + "-" + fifth;
+
     if (chordStr !== lastPlayedChord) {
+      push();
+      fill(255);
+      textSize(16);
+      text("Playing chord: " + chordStr, 20, 40);
+      pop();
+
       lastPlayedChord = chordStr;
+
       console.log("Playing chord: " + chordStr);
-      // 3초간 재생 (velocity 0.5)
-      polySynth.play(root, 0.5, 0, 3);
-      polySynth.play(third, 0.5, 0, 3);
-      polySynth.play(fifth, 0.5, 0, 3);
+
+      // 여기서 velocity를 noiseVolSlider.value()를 사용하여 chord 볼륨도 조절
+      polySynth.play(root, noiseVolSlider.value(), 0, 3);
+      polySynth.play(third, noiseVolSlider.value(), 0, 3);
+      polySynth.play(fifth, noiseVolSlider.value(), 0, 3);
     }
   }
 
@@ -307,44 +349,12 @@ function draw() {
   textStyle(BOLD);
   text("Silent Noisy Mountain", 50, 140);
   pop();
-  if (resetting) {
-    // 투명도 업데이트
-    fadeAmt = constrain(fadeAmt + FADE_STEP * fadeDir, 0, 255);
-
-    // 어두운 사각형으로 화면 덮기
-    push();
-    noStroke();
-    fill(0, fadeAmt);
-    rect(0, 0, width, height);
-    pop();
-
-    // 페이드‑아웃이 완전히 끝났을 때(=완전 검정)
-    if (fadeDir === 1 && fadeAmt >= 255) {
-      /* === 여기서 초기화하고 싶은 것들 수행 === */
-      mainGraphics.clear();
-      mainGraphics.background(0);
-      lastPlayedChord = "";
-      // 필요하다면 mountainAmp, prevVol 등도 리셋
-
-      // 페이드‑인 시작
-      fadeDir = -1;
-    }
-
-    // 페이드‑인이 모두 끝났으면 리셋 종료
-    if (fadeDir === -1 && fadeAmt <= 0) {
-      resetting = false;
-    }
-  }
 }
-
-
 
 // helper: 주파수를 MIDI 값으로 변환 (공식: midi = 69 + 12 * log2(freq / 440))
 function freqToMidi(freq) {
   return Math.round(69 + 12 * Math.log2(freq / 440));
 }
-
-
 
 // helper: MIDI 값을 음표 문자열로 변환 (예: 60 -> "C4")
 function midiToNote(midi) {
@@ -353,8 +363,6 @@ function midiToNote(midi) {
   let noteIndex = midi % 12;
   return noteNames[noteIndex] + octave;
 }
-
-
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
