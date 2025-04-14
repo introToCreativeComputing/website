@@ -4,7 +4,14 @@ let rail = [];     // y좌표를 저장할 배열
 let circleSize = 100;
 let loaderElement = document.getElementById('loader');
 let arrows = [];   // Arrow 객체 배열
+let waveSentences = [];
+const WAVE_STR = "ITS TI ME TO FOCUS            I MMERSI ON              PI NK NOI SE          WHI TE NOI SE            BROWN NOI SE             TELEVI SI ON STATI C              WIND            THUNDER             LET'S FOCUS   "; // 반복 문구 (끝에 공백 약간)
+const SPAWN_GAP = 60;   // 다음 문장이 언제 등장할지(픽셀 간격
+const WAVE_SPEED = 1.5;   // 왼→오 이동 속도
+const AMP = 25;         // 파동 진폭
+const FREQ = 0.015;     // 파동 주파수
 const ARROW_COUNT = 3; // 생성할 화살표 개수
+const WAVE_FONT_SIZE = 170;
 function preload() {
     soundFormats('mp3', 'wav');
     train = loadImage('assets/train.png');
@@ -13,8 +20,9 @@ function preload() {
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
-
-    fft = new p5.FFT(0.8, 1024);
+    textFont("f1");   // 원하는 폰트 지정
+    textAlign(LEFT, CENTER); // 왼쪽 정렬
+    waveSentences.push(new WaveSentence(width)); fft = new p5.FFT(0.8, 1024);
 
     noStroke();
 
@@ -52,11 +60,26 @@ function draw() {
     strokeWeight(3);
     ellipse(width * 0.5, height * 0.8, circleSize);
     fill(255); // 텍스트 색상 (흰색)
-    textSize(24); // 텍스트 크기
+    textSize(30); // 텍스트 크기
     text("Enter", width * 0.5, height * 0.8);
     for (let arrow of arrows) {
         arrow.update();
         arrow.display();
+    }
+    textSize(200); // 텍스트 크기
+
+    if (song.isPlaying()) {
+        // 마지막 문장이 일정 거리만큼 이동했으면 새 문장 추가
+        let last = waveSentences[waveSentences.length - 1];
+        if (!last || last.x + last.width() < width - SPAWN_GAP) {
+            waveSentences.push(new WaveSentence(width));
+        }
+    }
+
+    for (let i = waveSentences.length - 1; i >= 0; i--) {
+        waveSentences[i].update();
+        waveSentences[i].display();
+        if (waveSentences[i].isOffScreen()) waveSentences.splice(i, 1);
     }
 }
 
@@ -148,5 +171,39 @@ function mousePressed() {
     if (d < circleSize / 2) {
         // 다음 페이지로 이동 (예를 들어, nextpage.html)
         window.location.href = "mainContents.html";
+    }
+}
+class WaveSentence {
+    constructor(startX) {
+        this.x = startX;           // 왼쪽으로 흘러갈 기준 x
+        this.baseY = height * 0.15; // 전체 문장의 기준 y
+    }
+
+    update() {
+        this.x -= WAVE_SPEED;
+    }
+
+    display() {
+        push();
+        noStroke();
+        fill(255);
+        textSize(WAVE_FONT_SIZE);   // ← 크게!
+        let cx = this.x;
+        for (let i = 0; i < WAVE_STR.length; i++) {
+            let ch = WAVE_STR.charAt(i);
+            let yOffset = sin((cx * FREQ) + frameCount * 0.05) * AMP;
+            text(ch, cx, this.baseY + yOffset);
+            cx += textWidth(ch);      // 큰 글자 폭에 맞춰 이동
+        }
+        pop();
+    }
+    // 문장이 완전히 화면을 벗어났는지
+    isOffScreen() {
+        return this.x + this.width() < 0;
+    }
+
+    // 문장 전체 길이 계산
+    width() {
+        return textWidth(WAVE_STR);
     }
 }

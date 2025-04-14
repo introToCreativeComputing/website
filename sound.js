@@ -13,7 +13,6 @@ let fadeDir = 1;       // +1: out,  ‑1: in
 const FADE_STEP = 12;      // 한 프레임당 투명도 변화량
 
 
-// 현재 활성화된 노이즈와 노이즈 타입
 let activeNoise = null;
 let activeNoiseType = "";
 
