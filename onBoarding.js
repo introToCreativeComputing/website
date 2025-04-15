@@ -5,7 +5,7 @@ let circleSize = 80;
 let loaderElement = document.getElementById('loader');
 let arrows = [];   // Arrow 객체 배열
 let waveSentences = [];
-const WAVE_STR = "ITS TI ME TO FOCUS            I MMERSI ON              PI NK NOI SE          WHI TE NOI SE            BROWN NOI SE             TELEVI SI ON STATI C              WIND            THUNDER             LET'S FOCUS   "; // 반복 문구 (끝에 공백 약간)
+const WAVE_STR = "ITS TI ME TO FOCUS            I MMERSI ON              PI NK NOI SE          WHI TE NOI SE            BROWN NOI SE             TELEVI SI ON STATI C              WI ND            THUNDER             LET'S FOCUS   "; // 반복 문구 (끝에 공백 약간)
 const SPAWN_GAP = 60;   // 다음 문장이 언제 등장할지(픽셀 간격
 const WAVE_SPEED = 2;   // 왼→오 이동 속도
 const AMP = 25;         // 파동 진폭
@@ -116,7 +116,7 @@ function drawTrain() {
     image(train, 0, 0, 100, 50);
     pop();
 
-} 
+}
 class Arrow {
     constructor(baseAngle, radius) {
         this.baseAngle = baseAngle; // 마우스 기준 기본 오프셋 방향
@@ -190,8 +190,8 @@ class WaveSentence {
         push();
         noStroke();
         fill(255);
-        textFont(waveFont);        
-        textSize(WAVE_FONT_SIZE);   
+        textFont(waveFont);
+        textSize(WAVE_FONT_SIZE);
         let cx = this.x;
         for (let i = 0; i < WAVE_STR.length; i++) {
             let ch = WAVE_STR.charAt(i);
@@ -199,7 +199,7 @@ class WaveSentence {
             text(ch, cx, this.baseY + yOffset);
             cx += textWidth(ch);
         }
-        pop();                       
+        pop();
     }
     // 문장이 완전히 화면을 벗어났는지
     isOffScreen() {
